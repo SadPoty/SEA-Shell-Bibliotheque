@@ -1,0 +1,15 @@
+02|Le Seigneur des Anneaux|J. R. R. Tolkien|1954|Fantasy|disponible
+03|Le Meilleur des mondes|Aldous Huxley|1932|Dystopie|indisponible
+04|Fahrenheit 451|Ray Bradbury|1953|Science-fiction|disponible
+05|Les Misérables|Victor Hugo|1862|Classique|disponible
+06|Dune|Frank Herbert|1965|Science-fiction|indisponible
+07|Orgueil et Préjugés|Jane Austen|1813|Romance|disponible
+08|Le Nom de la rose|Umberto Eco|1980|Policier historique|disponible
+09|La Horde du Contrevent|Alain Damasio|2004|Science-fiction|indisponible
+10|Le Parfum|Patrick Süskind|1985|Roman|disponible
+11|La Ferme des animaux|George Orwell|1945|Satire|disponible
+12|Neuromancien|William Gibson|1984|Cyberpunk|indisponible
+13|Le Petit Prince|Antoine de Saint-Exupéry|1943|Conte|disponible
+14|Shining|Stephen King|1977|Horreur|disponible
+15|L’Étranger|Albert Camus|1942|Philosophique|indisponible
+
