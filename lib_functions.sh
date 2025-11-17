@@ -9,9 +9,40 @@ pagination() {
     sed -n "${start},${end}p" livres.txt
 }
 
-increment() {
-    local id=$( head -1 test.txt | cut -d'|' -f1 )
-    local newid=$(expr \( $id \- 1 \) )
-    
-    
+supprimer_livre() {
+	local id="$1"
+	local fichier="data/livres.txt"
+
+	if ! grep -q "$id|" "$fichier"; then
+		echo "Il n'y a pas de livre a l'ID $id."
+		return
+	fi
+
+	grep -v "^$id|" "$fichier" > "${fichier}.tmp" && mv "${fichier}.tmp" "$fichier"
+
+    for current_id in $(cut -d'|' -f1 "$fichier" | sort -n); do
+        if [ "$current_id" -gt "$id" ]
+        then
+            decrement "$fichier" "$current_id"
+        fi
+    done
+	echo "Le livre a été supprimer"
 }
+
+increment() {
+    local file="$1"
+    local id="$2"
+    local newid=$(expr $id + 1)
+
+    sed -i "0,/^${id}|/s//${newid}|/" "$file"
+}
+
+decrement() {
+    local file="$1"
+    local id="$2"
+    local newid=$(expr $id - 1)
+
+    sed -i "0,/^${id}|/s//${newid}|/" "$file"
+}
+
+
