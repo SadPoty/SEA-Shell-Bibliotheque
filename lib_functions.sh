@@ -253,3 +253,15 @@ retour_livre() {
     mettreAJourDisponibilite "$id" "$fichier_livres"
     sed -i "/^${id}/d" "$fichier_emprunt"
 }
+
+liste_emprunts() {
+    # liste_emprunts <fichier_livres>
+
+    local fichier="$1"
+    if [ ! -f "$fichier" ]; then
+        echo "Le fichier $fichier n'existe pas."
+        return 1
+    fi
+
+    grep -i '|indisponible$' "$fichier" | cut -d '|' -f 2
+}
