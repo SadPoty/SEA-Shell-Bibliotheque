@@ -179,3 +179,77 @@ mettreAJourDisponibilite() {
         return 1
     fi
 }
+
+emprunter_livre() {
+    # emprunter_livre <id> <emprunteur> <fichier_livres> <fichier_emprunt>
+
+    if [ "$#" -ne 4 ]; then
+        echo "Erreur : 4 arguments requis. Usage : emprunter_livre <id> <emprunteur> <fichier_livres> <fichier_emprunt>"
+        return 1
+    fi
+
+    local id="$1"
+    local emprunteur="$2"
+    local fichier_livres="$3"
+    local fichier_emprunt="$4"
+
+    for file in "$fichier_livres" "$fichier_emprunt"; do
+        if [ ! -f "$file" ]; then
+            echo "File $file does not exist"
+            return 1
+        fi
+    done
+
+    local ligne=$(grep -w "$id" "$fichier_livres")
+    if [ -z "$ligne" ]; then
+        echo "Erreur : aucun livre trouvé avec l'id '$id'."
+        return 1
+    fi
+
+    local dispo
+    dispo=$(echo "$ligne" | cut -d '|' -f6)
+    if [ "$dispo" != "disponible" ]; then
+        echo "Livre déjà emprunté"
+        return 1
+    fi
+
+    local date_emprunt date_retour
+    date_emprunt=$(date +'%d/%m/%Y')
+    date_retour=$(date -d "+7 days" +'%d/%m/%Y')
+
+    local emprunt="$id|$emprunteur|$date_emprunt|$date_retour"
+
+    mettreAJourDisponibilite "$id" "$fichier_livres"
+    echo "$emprunt" >> "$fichier_emprunt"
+}
+
+retour_livre() {
+    # retour_livre <id> <fichier_livres> <fichier_emprunt>
+
+    if [ "$#" -ne 3 ]; then
+        echo "Erreur : 3 arguments requis. Usage : emprunter <id> <fichier_livres> <fichier_emprunt>"
+        return 1
+    fi
+
+    local id="$1"
+    local fichier_livres="$2"
+    local fichier_emprunt="$3"
+
+    for file in "$fichier_livres" "$fichier_emprunt"; do
+        if [ ! -f "$file" ]; then
+            echo "File $file does not exist"
+            return 1
+        fi
+    done
+
+    local ligne_livre=$(grep -w "$id" "$fichier_livres")
+    local ligne_emprunt=$(grep -w "$id" "$fichier_emprunt")
+
+    if [ -z "$ligne_livre" ] || [ -z "$ligne_emprunt" ]; then
+        echo "Erreur : aucun livre trouvé avec l'id '$id'."
+        return 1
+    fi
+
+    mettreAJourDisponibilite "$id" "$fichier_livres"
+    sed -i "/^${id}/d" "$fichier_emprunt"
+}
