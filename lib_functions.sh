@@ -265,3 +265,55 @@ liste_emprunts() {
 
     grep -i '|indisponible$' "$fichier" | cut -d '|' -f 2
 }
+
+filtrer_genre() {
+    local genre="$1"
+    local fichier="data/livres.txt"
+
+    if [ -z "$genre" ]; then
+        echo "Veuillez entrer un genre."
+        return 1
+    fi
+
+    grep -i -E "^[0-9]+\|[^|]*\|[^|]*\|[^|]*\|${genre}\|" "$fichier"
+}
+
+filtrer_annee() {
+    local annee_min="$1"
+    local annee_max="$2"
+    local fichier="data/livres.txt"
+
+    if [ -z "$annee_min" ] || [ -z "$annee_max" ]; then
+        echo "Veuillez entrer une plage d'années : min max"
+        return 1
+    fi
+
+    awk -F'|' -v min="$annee_min" -v max="$annee_max" '{
+        if ($4 >= min && $4 <= max) print $0
+    }' "$fichier"
+}
+
+recherche_avancee() {
+    local titre="$1"
+    local auteur="$2"
+    local annee_min="$3"
+    local annee_max="$4"
+    local genre="$5"
+    local fichier="data/livres.txt"
+
+    awk -F'|' -v t="$titre" -v a="$auteur" -v min="$annee_min" -v max="$annee_max" -v g="$genre" '
+    BEGIN {
+        IGNORECASE=1
+    }
+    {
+        if ((t == "" || $2 ~ t) &&
+            (a == "" || $3 ~ a) &&
+            (min == "" || $4 >= min) &&
+            (max == "" || $4 <= max) &&
+            (g == "" || $5 ~ g))
+        {
+            print $0
+        }
+    }' "$fichier"
+}
+
