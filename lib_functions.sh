@@ -37,6 +37,8 @@ increment() {
     sed -i "0,/^${id}|/s//${newid}|/" "$file"
 }
 
+
+
 decrement() {
     local file="$1"
     local id="$2"
@@ -69,3 +71,23 @@ recherche_auteur() {
     grep -i -E "^[0-9]+\|[^|]*\|[^|]*${auteur}[^|]*\|" "$fichier"
 }
 
+ajouter_livre() {
+    local fichier="data/livres.txt"
+
+    if [ ! -s "$fichier" ]; then
+        newid=1
+    else
+        newid=$(cut -d'|' -f1 "$fichier" | sort -n | tail -1)
+        newid=$((newid + 1))
+    fi
+
+    read -p "Titre du livre : " titre
+    read -p "Auteur : " auteur
+    read -p "Année : " annee
+    read -p "Type : " type_liv 
+    read -p "Etat de l'emprunt : " etat_emprunt
+
+    echo "${newid}|${titre}|${auteur}|${annee}|${type_liv}|${etat_emprunt}" >> "$fichier"
+
+    echo "Livre ajouté avec succès : ID = $newid"
+}
