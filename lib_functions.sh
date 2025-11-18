@@ -45,4 +45,27 @@ decrement() {
     sed -i "0,/^${id}|/s//${newid}|/" "$file"
 }
 
+recherche_titre() {
+    local titre="$1"
+    local fichier="data/livres.txt"
+
+    if [ -z "$titre" ]; then
+        echo "Veuillez entrer un titre."
+        return 1
+    fi
+    grep -i -E "^[0-9]+\|[^|]*${titre}[^|]*\|" "$fichier"
+}
+
+recherche_auteur() {
+    local auteur="$1"
+    local fichier="data/livres.txt"
+
+    if [ -z "$auteur" ]; then
+        echo "Veuillez entrer un auteur."
+        return 1
+    fi
+
+    # colonne auteur = champ 3
+    grep -i -E "^[0-9]+\|[^|]*\|[^|]*${auteur}[^|]*\|" "$fichier"
+}
 
