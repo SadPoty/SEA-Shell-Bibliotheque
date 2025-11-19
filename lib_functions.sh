@@ -266,6 +266,61 @@ liste_emprunts() {
     grep -i '|indisponible$' "$fichier" | cut -d '|' -f 2
 }
 
+compter_emprunts_retard() {
+    # compter_emprunts_retard <fichier_emprunts>
+    # renvoie le nombre d'emprunts en retard
+
+    fichier="$1"
+    if [ ! -f "$fichier" ]; then
+        echo "Le fichier $fichier n'existe pas."
+        return 1
+    fi
+
+    ajd=$(date '+%Y%m%d')
+    retards=0
+
+    for ligne in $(cat "$fichier"); do
+        date_limite=$(echo "$ligne" | cut -d '|' -f 4)
+
+        jour=$(echo "$date_limite" | cut -d '/' -f 1)
+        mois=$(echo "$date_limite" | cut -d '/' -f 2)
+        annee=$(echo "$date_limite" | cut -d '/' -f 3)
+        d_limite="${annee}${mois}${jour}"
+
+        if [ "$d_limite" -lt "$ajd" ]; then
+            retards=$(expr "$retards" + 1)
+        fi
+    done < "$fichier"
+
+    echo "$retards"
+}
+
+lister_emprunts_retard() {
+    # lister_emprunts_retard <fichier_emprunts>
+    # renvoie la ligne complete
+
+    fichier="$1"
+    if [ ! -f "$fichier" ]; then
+        echo "Le fichier $fichier n'existe pas."
+        return 1
+    fi
+
+    ajd=$(date '+%Y%m%d')
+
+    for ligne in $(cat "$fichier"); do
+        date_limite=$(echo "$ligne" | cut -d '|' -f 4)
+
+        jour=$(echo "$date_limite" | cut -d '/' -f 1)
+        mois=$(echo "$date_limite" | cut -d '/' -f 2)
+        annee=$(echo "$date_limite" | cut -d '/' -f 3)
+        d_limite="${annee}${mois}${jour}"
+
+        if [ "$d_limite" -lt "$ajd" ]; then
+            echo "$ligne"
+        fi
+    done < "$fichier"
+}
+
 filtrer_genre() {
     local genre="$1"
     local fichier="data/livres.txt"
